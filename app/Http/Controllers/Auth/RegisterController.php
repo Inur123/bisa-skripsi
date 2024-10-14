@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Http\Controllers\Controller;
 use App\Models\User;
-use Illuminate\Foundation\Auth\RegistersUsers;
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request; // Import Request class
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Foundation\Auth\RegistersUsers;
 
 class RegisterController extends Controller
 {
@@ -17,7 +19,7 @@ class RegisterController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/home';
+    protected $redirectTo = '/login'; // Redirect to login after registration
 
     /**
      * Create a new controller instance.
@@ -71,5 +73,22 @@ class RegisterController extends Controller
             'kelompok' => $data['kelompok'] ?? null, // Handle nullable field
             'role' => 'mahasiswa', // Default role
         ]);
+    }
+
+    /**
+     * Handle a registration request for the application.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function register(Request $request)
+    {
+        $this->validator($request->all())->validate();
+
+        // Create the user
+        $this->create($request->all());
+
+        // Redirect to the login page with a success message
+        return redirect('/login')->with('success', 'Registration successful! You can now log in.');
     }
 }
