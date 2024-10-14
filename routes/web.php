@@ -3,25 +3,25 @@
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
-*/
-
-Route::get('/', function () {
-    return view('welcome');
-});
-
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Operator\OperatorController;
+use App\Http\Controllers\Mahasiswa\MahasiswaController;
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-Route::get('/admin', [App\Http\Controllers\HomeController::class, 'index'])->middleware('role:admin');
-Route::get('/operator', [App\Http\Controllers\HomeController::class, 'index'])->middleware('role:operator');
+// Admin routes
+Route::middleware('auth')->group(function () {
+    Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+});
 
+// Operator routes
+Route::middleware('auth')->group(function () {
+    Route::get('/operator/dashboard', [OperatorController::class, 'dashboard'])->name('operator.dashboard');
+});
+
+// Mahasiswa routes
+Route::middleware('auth')->group(function () {
+    Route::get('/mahasiswa/dashboard', [MahasiswaController::class, 'dashboard'])->name('mahasiswa.dashboard');
+});
 

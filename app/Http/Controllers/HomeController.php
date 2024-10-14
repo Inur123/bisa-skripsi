@@ -2,41 +2,31 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Auth; // Import Auth facade
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
     public function __construct()
     {
         $this->middleware('auth');
     }
 
     /**
-     * Show the application dashboard.
-     *
-     * @return \Illuminate\Contracts\Support\Renderable
+     * Redirect users to their respective dashboards after login.
      */
     public function index()
     {
-        // Get the authenticated user
         $user = Auth::user();
 
-        // Redirect to different views based on user role
         switch ($user->role) {
             case 'admin':
-                return view('home.admin'); // Admin view
+                return redirect()->route('admin.dashboard');
             case 'operator':
-                return view('home.operator'); // Operator view
+                return redirect()->route('operator.dashboard');
             case 'mahasiswa':
-                return view('home', ['user' => $user]);// Mahasiswa view
+                return redirect()->route('mahasiswa.dashboard');
             default:
-                abort(403, 'Unauthorized action.'); // Handle unauthorized access
+                abort(403, 'Unauthorized action.');
         }
     }
 }
