@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Auth; // Import Auth facade
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -23,6 +24,19 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        // Get the authenticated user
+        $user = Auth::user();
+
+        // Redirect to different views based on user role
+        switch ($user->role) {
+            case 'admin':
+                return view('home.admin'); // Admin view
+            case 'operator':
+                return view('home.operator'); // Operator view
+            case 'mahasiswa':
+                return view('home', ['user' => $user]);// Mahasiswa view
+            default:
+                abort(403, 'Unauthorized action.'); // Handle unauthorized access
+        }
     }
 }

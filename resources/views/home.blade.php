@@ -2,22 +2,14 @@
 
 @section('content')
 <div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">{{ __('Dashboard') }}</div>
+    <h1>Welcome, {{ $user->name }}!</h1> <!-- Display the user's name -->
+    <p>Email: {{ $user->email }}</p> <!-- Display the user's email -->
+    <p>Role: {{ $user->role }}</p> <!-- Display the user's role -->
+    <p>NIM: {{ $user->nim }}</p> <!-- Display the user's NIM, assuming it's a column in your users table -->
+    <p>Fakultas: {{ $user->fakultas }}</p> <!-- Display user's faculty -->
+    <p>Prodi: {{ $user->prodi }}</p> <!-- Display user's study program -->
+    <p>Kelompok: {{ $user->kelompok ?? 'Not Assigned' }}</p> <!-- Display user's group, or indicate if not assigned -->
 
-                <div class="card-body">
-                    @if (session('status'))
-                        <div class="alert alert-success" role="alert">
-                            {{ session('status') }}
-                        </div>
-                    @endif
-
-                    {{ __('You are logged in!') }}
-                </div>
-            </div>
-        </div>
-    </div>
+    <p>This is the mahasiswa dashboard.</p>
 </div>
 @endsection

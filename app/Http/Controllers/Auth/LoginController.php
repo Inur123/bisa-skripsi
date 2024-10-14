@@ -35,6 +35,29 @@ class LoginController extends Controller
     public function __construct()
     {
         $this->middleware('guest')->except('logout');
-        $this->middleware('auth')->only('logout');
+    }
+
+    /**
+     * Get the login identifier to be used by the controller.
+     *
+     * @return string
+     */
+    public function username()
+    {
+        return 'nim';  // Use NIM as the login identifier
+    }
+
+    /**
+     * Validate the user login request.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return void
+     */
+    protected function validateLogin($request)
+    {
+        $request->validate([
+            'nim' => ['required', 'string', 'exists:users,nim'], // Ensure NIM exists in the database
+            'password' => ['required', 'string'],
+        ]);
     }
 }

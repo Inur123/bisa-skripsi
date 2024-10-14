@@ -17,6 +17,12 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->enum('role', ['admin', 'operator', 'mahasiswa'])->default('mahasiswa'); // Role column
+            $table->string('nim')->unique(); // Unique NIM
+            $table->string('fakultas');
+            $table->string('prodi');
+            $table->string('file'); // File path column
+            $table->string('kelompok')->nullable(); // Nullable Kelompok
             $table->rememberToken();
             $table->timestamps();
         });
