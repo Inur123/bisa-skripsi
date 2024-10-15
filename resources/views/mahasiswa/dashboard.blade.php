@@ -14,7 +14,7 @@
                     @if ($operator)
                         {{ $operator->name }} <!-- Display operator's name -->
                     @else
-                        No operator assigned to your group.
+                       Pemandu belum tersedia
                     @endif
                 </li>
             </ul>

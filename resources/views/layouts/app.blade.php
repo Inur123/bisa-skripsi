@@ -30,9 +30,7 @@
                 </button>
 
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <!-- Right Side Of Navbar -->
                     <ul class="navbar-nav ms-auto">
-                        <!-- Authentication Links -->
                         @guest
                             @if (Route::has('login'))
                                 <li class="nav-item">
@@ -70,39 +68,36 @@
         </nav>
 
         <div class="container-fluid">
-            <main class="col-md-9 ms-sm-auto col-lg-10 px-4">
-                <div class="py-4">
-                    @yield('content')
-                </div>
-            </main>
-            {{-- <div class="row">
+            <div class="row flex-nowrap">
                 <!-- Sidebar -->
                 <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
                     <div class="position-sticky">
-                        <h4 class="text-center">Admin Menu</h4>
+                        <h4 class="text-center sidebar-heading">Admin Menu</h4>
                         <ul class="nav flex-column">
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('admin.dashboard') }}">
-                                    Dashboard
+                                <a class="nav-link {{ request()->is('admin/dashboard') ? 'active' : '' }}" href="{{ route('admin.dashboard') }}">
+                                    <i class="bi bi-house"></i> Dashboard
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('admin.users') }}">
-                                    Users
+                                <a class="nav-link {{ request()->is('admin/users') ? 'active' : '' }}" href="{{ route('admin.users') }}">
+                                    <i class="bi bi-person"></i> Users
                                 </a>
                             </li>
-
-
+                            <!-- Add more menu items as needed -->
                         </ul>
                     </div>
                 </nav>
 
-
-            </div> --}}
+                <main class="col-md-9 ms-sm-auto col-lg-10 px-4">
+                    <div class="py-4">
+                        @yield('content')
+                    </div>
+                </main>
+            </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
-
 </body>
 </html>
