@@ -87,40 +87,68 @@ class AdminController extends Controller
         // Start assigning groups from the next available index
         $globalGroupIndex = $lastGroupIndex + 1;
 
-        // Group users by their faculty (fakultas)
-        $groupedUsers = $users->groupBy('fakultas');
+        // Group existing mahasiswa users by fakultas
+        $existingGroups = User::where('role', 'mahasiswa')
+            ->whereNotNull('kelompok')
+            ->get()
+            ->groupBy('fakultas');
 
-        // Iterate through each faculty group
-        foreach ($groupedUsers as $fakultas => $mahasiswa) {
-            // Track the number of members in the current group
-            $memberCount = 0;
+        // Initialize an array to track the count of members in each group for round-robin assignment
+        $groupStatus = [];
 
-            // Assign each student to a group across faculties
-            foreach ($mahasiswa as $user) {
-                // Check if we need to start a new group
-                if ($memberCount == 10) {
-                    $globalGroupIndex++; // Increment the global group index for the next group
-                    $memberCount = 0; // Reset the member count
+        // Populate the group status with existing groups
+        foreach ($existingGroups as $fakultas => $mahasiswa) {
+            $groupedByKelompok = $mahasiswa->groupBy('kelompok');
+            foreach ($groupedByKelompok as $kelompok => $groupMembers) {
+                $count = $groupMembers->count();
+                $groupStatus[$fakultas][$kelompok] = $count; // Track the number of members in each group
+            }
+        }
+
+        // Assign new users to groups in a round-robin manner
+        foreach ($users as $user) {
+            // Determine the faculty of the user
+            $fakultas = $user->fakultas;
+
+            // Check if the faculty has existing groups
+            if (isset($groupStatus[$fakultas])) {
+                // Find the next available group in the round-robin manner
+                $assigned = false;
+                foreach ($groupStatus[$fakultas] as $kelompok => $memberCount) {
+                    if ($memberCount < 10) {
+                        // Assign to the first available group with fewer than 10 members
+                        $user->kelompok = $kelompok;
+                        $user->save();
+                        $groupStatus[$fakultas][$kelompok]++; // Increment the member count for this group
+                        $assigned = true;
+                        break; // Exit the loop once assigned
+                    }
                 }
 
-                // Assign the user to the current group
-                $user->kelompok = $globalGroupIndex; // Use the global group index
+                // If no available group was found, create a new one with the global index
+                if (!$assigned) {
+                    $user->kelompok = $globalGroupIndex; // Use the global group index
+                    $user->save();
+
+                    // Initialize the new group in the status
+                    $groupStatus[$fakultas][$globalGroupIndex] = 1; // Start with 1 member
+                    $globalGroupIndex++; // Increment the global group index for the next group
+                }
+            } else {
+                // If there are no existing groups for this faculty, create a new group with the global index
+                $user->kelompok = $globalGroupIndex; // Assign to the next global group
                 $user->save();
 
-                // Increment member count for the current group
-                $memberCount++;
-            }
-
-            // After processing each faculty, we ensure to keep incrementing the global index
-            // This will allow for a new group index to be set correctly for the next faculty
-            if ($memberCount > 0) {
-                $globalGroupIndex++; // Move to the next group index after finishing a faculty
+                // Initialize the new group in the status
+                $groupStatus[$fakultas][$globalGroupIndex] = 1; // Start with 1 member
+                $globalGroupIndex++; // Increment for future groups
             }
         }
 
         return redirect()->route('admin.users')
             ->with('success', 'Mahasiswa users have been assigned to groups successfully!');
     }
+
 
 
     public function clearGroups()

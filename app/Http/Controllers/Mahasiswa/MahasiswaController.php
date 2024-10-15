@@ -17,7 +17,8 @@ class MahasiswaController extends Controller
      */
     public function dashboard()
     {
-        $user = Auth::user();
-        return view('mahasiswa.dashboard', compact('user')); // Points to resources/views/mahasiswa/dashboard.blade.php
+        $user = Auth::user(); // Retrieve the authenticated user
+
+        return view('mahasiswa.dashboard', compact('user')); // Pass the user data to the view
     }
 }
