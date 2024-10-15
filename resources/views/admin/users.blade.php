@@ -1,4 +1,5 @@
 {{-- resources/views/admin/users/index.blade.php --}}
+@include('layouts.navbar')
 @extends('layouts.app')
 
 @section('content')
@@ -8,10 +9,22 @@
     @if (session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif
-
+    <form action="{{ route('admin.mahasiswa.clear') }}" method="POST" style="display:inline;">
+        @csrf
+        @method('DELETE')
+        <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete all mahasiswa users?');">Clear Mahasiswa Data</button>
+    </form>
     <div class="card shadow">
         <div class="card-body">
             <div class="mb-3">
+
+        <a href="{{ route('admin.assign.groups') }}" class="btn btn-primary mb-3">
+            Assign Users to Groups
+        </a>
+        <a href="{{ route('admin.clearGroups') }}" class="btn btn-danger"
+           onclick="return confirm('Are you sure you want to clear all group data?');">
+           Clear Group Data
+        </a>
                 <a href="{{ route('admin.users') }}" class="btn btn-success">Add New User</a>
             </div>
             <table class="table table-bordered table-hover">
