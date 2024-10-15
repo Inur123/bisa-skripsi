@@ -240,4 +240,52 @@ class AdminController extends Controller
 
         return redirect()->route('admin.users')->with('success', 'User deleted successfully.');
     }
+
+
+    //create data operator
+    public function createOperator()
+{
+    return view('admin.create_operator'); // Create a view for the form
+}
+/**
+ * Store a newly created operator in the database.
+ */
+public function storeOperator(Request $request)
+{
+    // Validate the request data
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'nim' => 'required|string|max:50', // NIM validation
+        'email' => 'required|email|unique:users',
+        'kelompok' => 'nullable|string',
+        'fakultas' => 'nullable|string',
+        'prodi' => 'nullable|string',
+        'file' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048', // File is required
+    ]);
+
+    // Handle file upload before creating the user
+    $filePath = $request->file('file')->store('files');
+
+    // Prepare the data for user creation
+    $data = [
+        'name' => $request->name,
+        'nim' => $request->nim,
+        'email' => $request->email,
+        'password' => bcrypt('password'), // Set default password
+        'role' => 'operator', // Default role is operator
+        'kelompok' => $request->kelompok,
+        'fakultas' => $request->fakultas,
+        'prodi' => $request->prodi,
+        'file' => $filePath, // Include file path in user data
+    ];
+
+    // Create the user with the file path included
+    User::create($data);
+
+    return redirect()->route('admin.users')->with('success', 'Operator created successfully!');
+}
+
+
+
+
 }

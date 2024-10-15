@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Operator;
 
 use App\Http\Controllers\Controller;
+use App\Models\User; // Import the User model
 
 class OperatorController extends Controller
 {
@@ -12,10 +13,19 @@ class OperatorController extends Controller
     }
 
     /**
-     * Show the operator dashboard.
+     * Show the operator dashboard with student data.
      */
     public function dashboard()
-    {
-        return view('operator.dashboard'); // Points to resources/views/operator/dashboard.blade.php
-    }
+{
+    // Get the authenticated operator
+    $operator = auth()->user();
+
+    // Retrieve students who belong to the same group as the operator
+    $students = User::where('kelompok', $operator->kelompok)
+                    ->where('role', 'mahasiswa') // Assuming 'mahasiswa' is the role for students
+                    ->get(['name', 'nim', 'email', 'kelompok', 'fakultas', 'prodi', 'file']); // Fetch the file column
+
+    return view('operator.dashboard', compact('students')); // Pass the students data to the view
+}
+
 }

@@ -53,8 +53,16 @@
                         <div class="row mb-3">
                             <label for="fakultas" class="col-md-4 col-form-label text-md-end">{{ __('Fakultas') }}</label>
                             <div class="col-md-6">
-                                <input id="fakultas" type="text" class="form-control @error('fakultas') is-invalid @enderror"
-                                    name="fakultas" value="{{ old('fakultas') }}" required>
+                                <select id="fakultas" name="fakultas" class="form-control @error('fakultas') is-invalid @enderror" required>
+                                    <option value="">-- Select Fakultas --</option>
+                                    <option value="Teknik">TEKNIK</option>
+                                    <option value="fai">FAI</option>
+                                    <option value="Ekonomi">EKONOMI</option>
+                                    <option value="Hukum">HUKUM</option>
+                                    <option value="fik">FIK</option>
+                                    <option value="fisip">FISIP</option>
+                                    <option value="fkip">FKIP</option>
+                                </select>
                                 @error('fakultas')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -66,8 +74,9 @@
                         <div class="row mb-3">
                             <label for="prodi" class="col-md-4 col-form-label text-md-end">{{ __('Prodi') }}</label>
                             <div class="col-md-6">
-                                <input id="prodi" type="text" class="form-control @error('prodi') is-invalid @enderror"
-                                    name="prodi" value="{{ old('prodi') }}" required>
+                                <select id="prodi" name="prodi" class="form-control @error('prodi') is-invalid @enderror" required>
+                                    <option value="">-- Select Prodi --</option>
+                                </select>
                                 @error('prodi')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -75,19 +84,6 @@
                                 @enderror
                             </div>
                         </div>
-
-                        {{-- <div class="row mb-3">
-                            <label for="kelompok" class="col-md-4 col-form-label text-md-end">{{ __('Kelompok') }}</label>
-                            <div class="col-md-6">
-                                <input id="kelompok" type="text" class="form-control @error('kelompok') is-invalid @enderror"
-                                    name="kelompok" value="{{ old('kelompok') }}" autocomplete="kelompok">
-                                @error('kelompok')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
-                        </div> --}}
 
                         <div class="row mb-3">
                             <label for="file" class="col-md-4 col-form-label text-md-end">{{ __('Upload File') }}</label>
@@ -136,4 +132,33 @@
         </div>
     </div>
 </div>
+
+<script>
+    const fakultasProdiMap = {
+        'Teknik': ['Teknik Informatika', 'Teknik Mesin', 'Teknik Elektro'],
+        'fai': ['Pgmi', 'Pendidikan Agama Islam','Psikologi Islam','Ipii','Ekonomi Syariah'],
+        'Ekonomi': ['S1 Akuntansi', 'Manajemen','Ekonomi Pembangunan','D3 Akuntansi',''],
+        'Hukum': ['Ilmu Hukum'],
+        'fik': ['Kebidanan','Fisioterapi','S1 Keperawatan','D3 Keperawatan'],
+        'fisip': ['Ilmu Pemerintahan','Ilmu Komunikasi',''],
+        'fkip': ['Pendidikan Bahasa Inggris', 'Pendidikan Matematika','Ppkn','Pgpaud']
+    };
+
+    document.getElementById('fakultas').addEventListener('change', function() {
+        const selectedFakultas = this.value;
+        const prodiSelect = document.getElementById('prodi');
+
+        // Clear current options
+        prodiSelect.innerHTML = '<option value="">-- Select Prodi --</option>';
+
+        if (fakultasProdiMap[selectedFakultas]) {
+            fakultasProdiMap[selectedFakultas].forEach(function(prodi) {
+                const option = document.createElement('option');
+                option.value = prodi;
+                option.textContent = prodi;
+                prodiSelect.appendChild(option);
+            });
+        }
+    });
+</script>
 @endsection

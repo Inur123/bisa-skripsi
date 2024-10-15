@@ -41,12 +41,12 @@
     <div>
         <h2>Group Information</h2>
         @foreach ($groupData as $fakultas => $groups)
-            <h3>Fakultas: {{ $fakultas }}</h3>
-            <p>Total Mahasiswa: {{ $totalMembersPerFakultas[$fakultas]->total ?? 0 }}</p>
+            <h3>Fakultas: {{ $fakultas }} {{ $totalMembersPerFakultas[$fakultas]->total ?? 0 }}</h3>
+            {{-- <p>Total Mahasiswa: {{ $totalMembersPerFakultas[$fakultas]->total ?? 0 }}</p> --}}
             <p>Total Kelompok: {{ $totalGroupsPerFakultas[$fakultas] ?? 0 }}</p>
 
             @foreach ($groups as $groupIndex => $memberCount)
-                <p>Group {{ $groupIndex }}: {{ $memberCount }} Members</p>
+                <p>Kelompok {{ $groupIndex }} = {{ $memberCount }} Anggota</p>
             @endforeach
         @endforeach
     </div>

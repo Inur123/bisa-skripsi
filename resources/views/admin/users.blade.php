@@ -14,6 +14,9 @@
         @method('DELETE')
         <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete all mahasiswa users?');">Clear Mahasiswa Data</button>
     </form>
+    <div class="mt-4">
+        <a href="{{ route('admin.create_operator') }}" class="btn btn-success">Create New Operator</a>
+    </div>
 
     <div class="card shadow">
         <div class="card-body">
@@ -90,6 +93,7 @@
                         <th>No</th>
                         <th>Email</th>
                         <th>Name</th>
+                        <th>NIM</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -99,6 +103,7 @@
                             <td>{{ ($admin->currentPage() - 1) * $admin->perPage() + $loop->iteration }}</td>
                             <td>{{ $user->email }}</td>
                             <td>{{ $user->name }}</td>
+                            <td>{{ $user->nim }}</td>
                             <td>
                                 <a href="{{ route('admin.edit', $user->id) }}" class="btn btn-primary btn-sm" title="Edit User">
                                     <i class="fas fa-edit"></i> Edit
@@ -128,6 +133,7 @@
                         <th>No</th>
                         <th>Email</th>
                         <th>Name</th>
+                        <th>NIM</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -137,6 +143,7 @@
                             <td>{{ ($operator->currentPage() - 1) * $operator->perPage() + $loop->iteration }}</td>
                             <td>{{ $user->email }}</td>
                             <td>{{ $user->name }}</td>
+                            <td>{{ $user->nim }}</td>
                             <td>
                                 <a href="{{ route('admin.edit', $user->id) }}" class="btn btn-primary btn-sm" title="Edit User">
                                     <i class="fas fa-edit"></i> Edit

@@ -24,6 +24,10 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/admin/assign-groups', [AdminController::class, 'assignGroups'])->name('admin.assign.groups');
     Route::get('/admin/clear-groups', [AdminController::class, 'clearGroups'])->name('admin.clearGroups');
     Route::delete('/admin/mahasiswa/clear', [AdminController::class, 'clearMahasiswa'])->name('admin.mahasiswa.clear');
+    //operator
+    Route::get('admin/operators/create', [AdminController::class, 'createOperator'])->name('admin.create_operator');
+    // Route to store the new operator
+    Route::post('admin/operators', [AdminController::class, 'storeOperator'])->name('admin.store_operator');
 });
 
 // Operator routes
@@ -34,5 +38,7 @@ Route::middleware('auth')->group(function () {
 // Mahasiswa routes
 Route::middleware('auth')->group(function () {
     Route::get('/mahasiswa/dashboard', [MahasiswaController::class, 'dashboard'])->name('mahasiswa.dashboard');
+    Route::get('mahasiswa/edit', [MahasiswaController::class, 'edit'])->name('mahasiswa.edit');
+    Route::put('mahasiswa/update', [MahasiswaController::class, 'update'])->name('mahasiswa.update');
 });
 

@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Models\User;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request; // Import Request class
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -14,29 +14,13 @@ class RegisterController extends Controller
 {
     use RegistersUsers;
 
-    /**
-     * Where to redirect users after registration.
-     *
-     * @var string
-     */
-    protected $redirectTo = '/login'; // Redirect to login after registration
+    protected $redirectTo = '/login';
 
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
     public function __construct()
     {
         $this->middleware('guest');
     }
 
-    /**
-     * Get a validator for an incoming registration request.
-     *
-     * @param  array  $data
-     * @return \Illuminate\Contracts\Validation\Validator
-     */
     protected function validator(array $data)
     {
         return Validator::make($data, [
@@ -51,12 +35,6 @@ class RegisterController extends Controller
         ]);
     }
 
-    /**
-     * Create a new user instance after a valid registration.
-     *
-     * @param  array  $data
-     * @return \App\Models\User
-     */
     protected function create(array $data)
     {
         // Store the uploaded file and get the file path
@@ -69,26 +47,79 @@ class RegisterController extends Controller
             'nim' => $data['nim'],
             'fakultas' => $data['fakultas'],
             'prodi' => $data['prodi'],
-            'file' => $filePath, // Store the path in the DB
-            'kelompok' => $data['kelompok'] ?? null, // Handle nullable field
+            'file' => $filePath,
+            'kelompok' => null, // Set to null; we will assign it later
             'role' => 'mahasiswa', // Default role
         ]);
     }
 
-    /**
-     * Handle a registration request for the application.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function register(Request $request)
     {
         $this->validator($request->all())->validate();
 
         // Create the user
-        $this->create($request->all());
+        $user = $this->create($request->all());
+
+        // Assign user to a group
+        $this->assignGroupToUser($user);
 
         // Redirect to the login page with a success message
         return redirect('/login')->with('success', 'Registration successful! You can now log in.');
+    }
+
+    protected function assignGroupToUser(User $user)
+    {
+        // Retrieve all 'mahasiswa' users who are not yet assigned to a group
+        $users = User::where('role', 'mahasiswa')->whereNull('kelompok')->get();
+
+        // Find the highest existing group index to continue numbering correctly
+        $lastGroupIndex = User::where('role', 'mahasiswa')
+            ->whereNotNull('kelompok')
+            ->max(\DB::raw('CAST(kelompok AS UNSIGNED)')) ?? 0;
+
+        // Start assigning groups from the next available index
+        $globalGroupIndex = $lastGroupIndex + 1;
+
+        // Group existing mahasiswa users by fakultas
+        $existingGroups = User::where('role', 'mahasiswa')
+            ->whereNotNull('kelompok')
+            ->get()
+            ->groupBy('fakultas');
+
+        // Initialize an array to track the count of members in each group for round-robin assignment
+        $groupStatus = [];
+
+        // Populate the group status with existing groups
+        foreach ($existingGroups as $fakultas => $mahasiswa) {
+            $groupedByKelompok = $mahasiswa->groupBy('kelompok');
+            foreach ($groupedByKelompok as $kelompok => $groupMembers) {
+                $count = $groupMembers->count();
+                $groupStatus[$fakultas][$kelompok] = $count; // Track the number of members in each group
+            }
+        }
+
+        // Assign the new user to a group in a round-robin manner
+        $fakultas = $user->fakultas;
+
+        // Check if the faculty has existing groups
+        if (isset($groupStatus[$fakultas])) {
+            // Find the next available group in the round-robin manner
+            foreach ($groupStatus[$fakultas] as $kelompok => $memberCount) {
+                if ($memberCount < 10) {
+                    // Assign to the first available group with fewer than 10 members
+                    $user->kelompok = $kelompok;
+                    $user->save();
+                    $groupStatus[$fakultas][$kelompok]++; // Increment the member count for this group
+                    return; // Exit the method once assigned
+                }
+            }
+        }
+
+        // If no available group was found, create a new one with the global index
+        $user->kelompok = $globalGroupIndex; // Use the global group index
+        $user->save();
+
+        // Initialize the new group in the status
+        $groupStatus[$fakultas][$globalGroupIndex] = 1; // Start with 1 member
     }
 }
