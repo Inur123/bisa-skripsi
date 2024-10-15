@@ -67,8 +67,10 @@ class AdminController extends Controller
      */
     public function showAllUsers()
     {
-        $users = User::paginate(10);
-        return view('admin.users', compact('users'));
+        $mahasiswa = User::where('role', 'mahasiswa')->paginate(10);
+        $admin = User::where('role', 'admin')->paginate(10);
+        $operator = User::where('role', 'operator')->paginate(10);
+        return view('admin.users', compact('mahasiswa', 'admin', 'operator'));
     }
 
     /**
