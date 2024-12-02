@@ -25,7 +25,7 @@ class OperatorController extends Controller
                     ->where('role', 'mahasiswa') // Assuming 'mahasiswa' is the role for students
                     ->get(['name', 'nim', 'email', 'kelompok', 'fakultas', 'prodi', 'file']); // Fetch the file column
 
-    return view('operator.dashboard', compact('students')); // Pass the students data to the view
+    return view('operator.dashboard', compact('students','operator')); // Pass the students data to the view
 }
 
 }

@@ -28,6 +28,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('admin/operators/create', [AdminController::class, 'createOperator'])->name('admin.create_operator');
     // Route to store the new operator
     Route::post('admin/operators', [AdminController::class, 'storeOperator'])->name('admin.store_operator');
+
 });
 
 // Operator routes

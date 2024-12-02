@@ -1,14 +1,20 @@
 @extends('layouts.app')
+@section('navbar')
+@include('layouts.navbar')
+@endsection
+@section('sidebar')
+@include('layouts.sidebar')
+@endsection
 
 @section('content')
 <div class="container">
-    <h1>Welcome, Operator!</h1>
-    <p>This is the operator dashboard.</p>
+    <h1>Welcome, {{ $operator->name }}!</h1>
+    <p>Halaman ini adalah dashboard pemandu.</p>
 
-    <h2>Students in Your Group</h2>
+    <h2>Data Mahasiswa Kelompok Kamu</h2>
 
     @if ($students->isEmpty())
-        <p>No students found in your group.</p>
+        <p>Maaf belum ada mahasiswa yang masuk ke kelompok kamu</p>
     @else
         <p>Total Students: {{ $students->count() }}</p> <!-- Display total number of students -->
 
@@ -39,7 +45,7 @@
                         <td>
                             @if ($student->file)
                                 <a href="{{ asset('storage/' . $student->file) }}" class="btn btn-info btn-sm" target="_blank">
-                                    <i class="fas fa-file-download"></i> Download
+                                    <i class="fas fa-file-download"></i> Lihat File
                                 </a>
                             @else
                                 No file available

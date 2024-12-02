@@ -1,5 +1,11 @@
 
 @extends('layouts.app')
+@section('navbar')
+@include('layouts.navbar')
+@endsection
+@section('sidebar')
+@include('layouts.sidebar')
+@endsection
 
 @section('content')
 <div class="container">
@@ -134,6 +140,7 @@
                         <th>Email</th>
                         <th>Name</th>
                         <th>NIM</th>
+                        <th>Kelompok</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -144,6 +151,7 @@
                             <td>{{ $user->email }}</td>
                             <td>{{ $user->name }}</td>
                             <td>{{ $user->nim }}</td>
+                            <td>{{ $user->kelompok }}</td>
                             <td>
                                 <a href="{{ route('admin.edit', $user->id) }}" class="btn btn-primary btn-sm" title="Edit User">
                                     <i class="fas fa-edit"></i> Edit

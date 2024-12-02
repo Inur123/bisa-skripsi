@@ -1,5 +1,5 @@
 @extends('layouts.app')
-
+@include('layouts.navbar')
 @section('content')
 <div class="container">
     <h1>Create Operator</h1>
@@ -48,3 +48,4 @@
     </form>
 </div>
 @endsection
+

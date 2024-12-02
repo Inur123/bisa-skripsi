@@ -18,48 +18,59 @@ class AdminController extends Controller
      * Show the admin dashboard.
      */
     public function dashboard()
-{
-    // Hitung total user berdasarkan role
-    $totalUsers = User::count(); // Total semua user
-    $totalMahasiswa = User::where('role', 'mahasiswa')->count();
-    $totalAdmin = User::where('role', 'admin')->count();
-    $totalOperator = User::where('role', 'operator')->count();
+    {
+        // Hitung total user berdasarkan role
+        $totalUsers = User::count(); // Total semua user
+        $totalMahasiswa = User::where('role', 'mahasiswa')->count();
+        $totalAdmin = User::where('role', 'admin')->count();
+        $totalOperator = User::where('role', 'operator')->count();
 
-    // Calculate the total number of members in each faculty (fakultas)
-    $totalMembersPerFakultas = User::where('role', 'mahasiswa')
-        ->select('fakultas', \DB::raw('count(*) as total'))
-        ->groupBy('fakultas')
-        ->get()
-        ->keyBy('fakultas');
+        // Calculate the total number of members in each faculty (fakultas)
+        $totalMembersPerFakultas = User::where('role', 'mahasiswa')
+            ->select('fakultas', \DB::raw('count(*) as total'))
+            ->groupBy('fakultas')
+            ->get()
+            ->keyBy('fakultas');
 
-    // Retrieve the latest group data from the database
-    $groupData = User::where('role', 'mahasiswa')
-        ->whereNotNull('kelompok')
-        ->select('fakultas', 'kelompok', \DB::raw('count(*) as total'))
-        ->groupBy('fakultas', 'kelompok')
-        ->get()
-        ->groupBy('fakultas')
-        ->map(function ($groups) {
-            // Convert the collection of groups to an array of group totals
-            return $groups->pluck('total', 'kelompok')->toArray();
+        // Retrieve the latest group data from the database
+        $groupData = User::where('role', 'mahasiswa')
+            ->whereNotNull('kelompok')
+            ->select('fakultas', 'kelompok', \DB::raw('count(*) as total'))
+            ->groupBy('fakultas', 'kelompok')
+            ->get()
+            ->groupBy('fakultas')
+            ->map(function ($groups) {
+                return $groups->pluck('total', 'kelompok')->toArray();
+            });
+
+        // Calculate total groups per faculty
+        $totalGroupsPerFakultas = $groupData->map(function ($groups) {
+            return count($groups);
         });
 
-    // Calculate total groups per faculty
-    $totalGroupsPerFakultas = $groupData->map(function ($groups) {
-        return count($groups); // Count the number of groups for each faculty
-    });
+        // Retrieve user registration data for the week (Monday to Sunday)
+        $registrations = User::select(
+                \DB::raw('DATE(created_at) as date'),
+                \DB::raw('count(*) as count')
+            )
+            ->where('created_at', '>=', now()->startOfWeek()) // Start of the week (Monday)
+            ->where('created_at', '<=', now()->endOfWeek()) // End of the week (Sunday)
+            ->groupBy('date')
+            ->orderBy('date')
+            ->get();
 
-    // Kirim data ke view
-    return view('admin.dashboard', compact(
-        'totalUsers',
-        'totalMahasiswa',
-        'totalAdmin',
-        'totalOperator',
-        'groupData', // Group data as array
-        'totalMembersPerFakultas', // Include total members per faculty
-        'totalGroupsPerFakultas' // Include total groups per faculty
-    ));
-}
+        // Kirim data ke view
+        return view('admin.dashboard', compact(
+            'totalUsers',
+            'totalMahasiswa',
+            'totalAdmin',
+            'totalOperator',
+            'groupData',
+            'totalMembersPerFakultas',
+            'totalGroupsPerFakultas',
+            'registrations' // Pass the retrieved registrations data to the view
+        ));
+    }
 
 
     /**
@@ -284,6 +295,7 @@ public function storeOperator(Request $request)
 
     return redirect()->route('admin.users')->with('success', 'Operator created successfully!');
 }
+
 
 
 
