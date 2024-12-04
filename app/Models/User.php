@@ -20,7 +20,10 @@ class User extends Authenticatable
         'prodi',
         'file',
         'kelompok',
-        'role', // Keep this to use the enum
+        'role',
+        'nohp',
+        'alamat',
+        'jeniskelamin',
     ];
 
     protected $hidden = [

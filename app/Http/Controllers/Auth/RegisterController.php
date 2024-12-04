@@ -30,8 +30,15 @@ class RegisterController extends Controller
             'nim' => ['required', 'string', 'unique:users,nim'],
             'fakultas' => ['required', 'string', 'max:255'],
             'prodi' => ['required', 'string', 'max:255'],
-            'file' => ['required', 'file', 'mimes:jpg,jpeg,png,pdf'], // Adjust as needed
+            'file' => ['required', 'file', 'mimes:jpg,jpeg,png,pdf'],
             'kelompok' => ['nullable', 'string', 'max:255'],
+            'nohp' => ['nullable', 'string', 'max:15'],
+        'alamat' => ['nullable', 'string'],
+        'jeniskelamin' => ['nullable', 'in:Laki-Laki,Perempuan'],
+        'password_confirmation' => ['required', 'string', 'min:8'],
+        'g-recaptcha-response' => ['required'],
+
+
         ]);
     }
 
@@ -49,7 +56,11 @@ class RegisterController extends Controller
             'prodi' => $data['prodi'],
             'file' => $filePath,
             'kelompok' => null, // Set to null; we will assign it later
-            'role' => 'mahasiswa', // Default role
+            'role' => 'mahasiswa',
+            'nohp' => $data['nohp'],
+            'alamat' => $data['alamat'],
+            'jeniskelamin' => $data['jeniskelamin'],
+
         ]);
     }
 

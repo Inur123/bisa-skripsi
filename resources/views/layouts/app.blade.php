@@ -119,5 +119,6 @@
     <script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.8/dist/iconify-icon.min.js"></script>
     <!-- script grafik -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://code.iconify.design/3/3.0.0-alpha.4/iconify.min.js"></script>
 </body>
 </html>

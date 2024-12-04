@@ -23,6 +23,9 @@ return new class extends Migration
             $table->string('prodi');
             $table->string('file'); // File path column
             $table->string('kelompok')->nullable(); // Nullable Kelompok
+            $table->string('nohp')->nullable(); // Nomor HP (opsional) dengan panjang maksimum 15 karakter
+    $table->text('alamat')->nullable(); // Alamat (opsional), gunakan tipe `text` untuk data lebih panjang
+    $table->enum('jeniskelamin', ['Laki-Laki', 'Perempuan'])->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

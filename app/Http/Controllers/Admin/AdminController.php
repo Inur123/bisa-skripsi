@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\User;
+use App\Models\Announcement;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
@@ -296,7 +297,88 @@ public function storeOperator(Request $request)
     return redirect()->route('admin.users')->with('success', 'Operator created successfully!');
 }
 
+// Menampilkan form untuk membuat pengumuman
+public function createAnnouncement()
+{
+    // Mengambil semua pengumuman, atau bisa disesuaikan jika perlu
+    $announcements = Announcement::all();
 
+    // Kembalikan view create_announcement.blade.php
+    return view('admin.create_announcement', compact('announcements'));
+}
+
+// Menyimpan pengumuman baru
+public function storeAnnouncement(Request $request)
+{
+    $request->validate([
+        'title' => 'required|string|max:255',
+        'content' => 'required|string',
+        'role' => 'required|in:operator,mahasiswa',
+    ]);
+
+    // Membuat pengumuman baru dan menyimpannya di database
+    Announcement::create($request->only('title', 'content', 'role'));
+
+    // Redirect ke halaman create announcement dengan pesan sukses
+    return redirect()->route('admin.create_announcement')->with('success', 'Announcement created successfully!');
+}
+
+// Mendapatkan pengumuman berdasarkan role (admin hanya mengelola pengumuman mahasiswa)
+public function getAnnouncementsByRole()
+{
+    $role = auth()->user()->role; // Mendapatkan role dari user yang login
+
+    // Ambil pengumuman berdasarkan role yang sedang aktif
+    $announcements = Announcement::where('role', $role)->where('is_active', true)->latest()->get();
+
+    // Kirimkan pengumuman ke view dashboard admin
+    return view('admin.dashboard', compact('announcements'));
+}
+
+// Mengubah status aktif/tidak aktif pengumuman
+public function toggleAnnouncementStatus($id)
+{
+    // Mencari pengumuman berdasarkan ID
+    $announcement = Announcement::findOrFail($id);
+
+    // Toggle status 'is_active' pengumuman
+    $announcement->is_active = !$announcement->is_active;
+    $announcement->save();
+
+    // Redirect kembali dengan pesan sukses
+    return redirect()->route('admin.create_announcement')->with('success', 'Announcement status updated successfully!');
+}
+
+// Menghapus pengumuman
+public function destroyAnnouncement($id)
+{
+    // Cari pengumuman berdasarkan ID dan hapus
+    $announcement = Announcement::findOrFail($id);
+    $announcement->delete();
+
+    // Redirect dengan pesan sukses
+    return redirect()->route('admin.create_announcement')->with('success', 'Announcement deleted successfully!');
+}
+
+// Mengupdate pengumuman
+public function updateAnnouncement(Request $request, $id)
+{
+    // Validasi data yang diterima
+    $request->validate([
+        'title' => 'required|string|max:255',
+        'content' => 'required|string',
+        'role' => 'required|in:operator,mahasiswa',
+    ]);
+
+    // Mencari pengumuman berdasarkan ID
+    $announcement = Announcement::findOrFail($id);
+
+    // Update pengumuman dengan data yang baru
+    $announcement->update($request->only('title', 'content', 'role'));
+
+    // Redirect ke halaman create_announcement dengan pesan sukses
+    return redirect()->route('admin.create_announcement')->with('success', 'Announcement updated successfully!');
+}
 
 
 

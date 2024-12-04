@@ -9,6 +9,20 @@
 @section('content')
 <div class="container">
     <h1>Welcome, {{ $operator->name }}!</h1>
+    @if($announcements->isNotEmpty())
+    <h3 class="mb-3">Pengumuman</h3>
+    <div class="card mb-4">
+        <div class="card-body">
+            @foreach($announcements as $announcement)
+                <div class="alert alert-primary">
+                    <h5>{{ $announcement->title }}</h5>
+                    <p>{{ $announcement->content }}</p>
+                </div>
+            @endforeach
+        </div>
+    </div>
+@else
+    @endif
     <p>Halaman ini adalah dashboard pemandu.</p>
 
     <h2>Data Mahasiswa Kelompok Kamu</h2>

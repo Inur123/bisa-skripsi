@@ -29,11 +29,23 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     // Route to store the new operator
     Route::post('admin/operators', [AdminController::class, 'storeOperator'])->name('admin.store_operator');
 
+    // Announcement Routes
+// Route to view all announcements
+// Route to create a new announcement
+    Route::get('/admin/create-announcement', [AdminController::class, 'createAnnouncement'])->name('admin.create_announcement');
+    Route::post('/admin/store-announcement', [AdminController::class, 'storeAnnouncement'])->name('admin.store_announcement'); // Route to store the new announcement
+    Route::put('/admin/announcement/{id}/toggle', [AdminController::class, 'toggleAnnouncementStatus'])->name('admin.toggle_announcement_status'); // Route to toggle status of announcement
+    Route::put('/admin/announcement/{id}/toggle', [AdminController::class, 'toggleAnnouncementStatus'])->name('admin.toggle_announcement_status');
+    Route::delete('/admin/announcement/{id}', [AdminController::class, 'destroyAnnouncement'])->name('admin.destroy_announcement'); // Route to delete the announcement
+    Route::put('/admin/announcement/{id}/update', [AdminController::class, 'updateAnnouncement'])->name('admin.update_announcement');
+
+
 });
 
 // Operator routes
 Route::middleware('auth')->group(function () {
     Route::get('/operator/dashboard', [OperatorController::class, 'dashboard'])->name('operator.dashboard');
+    Route::get('/dashboard', [AdminController::class, 'getAnnouncementsByRole'])->name('dashboard');
 });
 
 // Mahasiswa routes
@@ -41,5 +53,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/mahasiswa/dashboard', [MahasiswaController::class, 'dashboard'])->name('mahasiswa.dashboard');
     Route::get('mahasiswa/edit', [MahasiswaController::class, 'edit'])->name('mahasiswa.edit');
     Route::put('mahasiswa/update', [MahasiswaController::class, 'update'])->name('mahasiswa.update');
+    Route::get('/dashboard', [AdminController::class, 'getAnnouncementsByRole'])->name('dashboard');
 });
 

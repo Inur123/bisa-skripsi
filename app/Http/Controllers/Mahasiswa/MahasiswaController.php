@@ -2,6 +2,7 @@
 namespace App\Http\Controllers\Mahasiswa;
 
 use App\Models\User;
+use App\Models\Announcement;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -26,8 +27,11 @@ class MahasiswaController extends Controller
         $operator = User::where('kelompok', $user->kelompok)
             ->where('role', 'operator')
             ->first();
-
-        return view('mahasiswa.dashboard', compact('user', 'operator')); // Pass both user and operator data to the view
+        $announcements = Announcement::where('role', 'mahasiswa')
+            ->where('is_active', true)  // Filter by active status
+            ->latest()
+            ->get();
+        return view('mahasiswa.dashboard', compact('user', 'operator','announcements')); // Pass both user and operator data to the view
     }
 
     // Show the form for editing the authenticated user's data
@@ -106,5 +110,13 @@ class MahasiswaController extends Controller
     return redirect()->route('mahasiswa.dashboard')->with('success', 'Data updated successfully.');
 }
 
+public function getAnnouncementsByRole()
+{
+    $role = auth()->user()->role;  // Ambil role dari pengguna yang sedang login
 
+    // Ambil pengumuman untuk role 'mahasiswa'
+    $announcements = Announcement::where('role', $role)->latest()->get();
+
+    return view('mahasiswa.dashboard', compact('announcements'));
+}
 }

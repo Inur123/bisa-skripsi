@@ -1,16 +1,38 @@
 @extends('layouts.app')
+
 @section('navbar')
-@include('layouts.navbar')
+    @include('layouts.navbar')
 @endsection
+
 @section('sidebar')
-@include('layouts.sidebar')
+    @include('layouts.sidebar')
 @endsection
 
 @section('content')
 <div class="container">
+    <!-- Welcome Message -->
     <h1 class="mb-4">Welcome, {{ $user->name }}!</h1>
     <p class="lead mb-4">This is your dashboard.</p>
 
+    <!-- Announcement Section -->
+
+    <!-- Tampilkan Pengumuman dari Database -->
+    @if($announcements->isNotEmpty())
+    <h3 class="mb-3">Pengumuman</h3>
+    <div class="card mb-4">
+        <div class="card-body">
+            @foreach($announcements as $announcement)
+                <div class="alert alert-primary">
+                    <h5>{{ $announcement->title }}</h5>
+                    <p>{{ $announcement->content }}</p>
+                </div>
+            @endforeach
+        </div>
+    </div>
+@else
+    @endif
+
+    <!-- Section: Pemandu -->
     <h2 class="mb-3">Pemandu</h2>
     <div class="card mb-4">
         <div class="card-body">
@@ -20,13 +42,14 @@
                     @if ($operator)
                         {{ $operator->name }} <!-- Display operator's name -->
                     @else
-                       Pemandu belum tersedia
+                        Pemandu belum tersedia
                     @endif
                 </li>
             </ul>
         </div>
     </div>
 
+    <!-- Section: Your Details -->
     <h2 class="mb-3">Your Details</h2>
     <div class="card">
         <div class="card-body">
@@ -38,7 +61,7 @@
                 <li class="list-group-item"><strong>Prodi:</strong> {{ $user->prodi }}</li>
                 <li class="list-group-item"><strong>Kelompok:</strong> {{ $user->kelompok }}</li>
 
-                <!-- Display file upload preview -->
+                <!-- File Upload Preview -->
                 <li class="list-group-item">
                     <strong>Uploaded File:</strong>
                     @if($user->file)
@@ -69,6 +92,7 @@
         </div>
     </div>
 
+    <!-- Edit Data Button -->
     <div class="mt-4">
         <a href="{{ route('mahasiswa.edit', $user->id) }}" class="btn btn-primary">Edit Data</a>
     </div>
